@@ -150,6 +150,17 @@ public class FilmService {
         }
     }
 
+    // получение списка общих фильмов
+    public List<Film> commonFilmsList(Long userId, Long friendId) {
+        if(userStorage.findUserById(userId) == null || userStorage.findUserById(friendId) == null) {
+            log.info("Попытка получения списка общих фильмов пользователями с несуществующими id");
+            throw new UserNotFoundException("Один из пользователей не зарегестрирован");
+        } else {
+            log.info("Получен список общих фильмов пользователей {} и {}", userId, friendId);
+            return filmStorage.commonFilmsList(userId, friendId);
+        }
+    }
+
     private void checkId(Long id, Long userId) {
         if (id == null || id < 1) {
             log.info("Фильм с пустым или отрицательным id {}");

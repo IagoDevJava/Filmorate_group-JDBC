@@ -58,6 +58,13 @@ public class FilmController {
         return filmService.deleteLike(id, userId);
     }
 
+    // GET /films/common?userId={userId}&friendId={friendId} - получить список общих фильмов
+    @GetMapping("/common")
+    public List<Film> commonFilmsList(@RequestParam Long userId, @RequestParam Long friendId) {
+        log.info("Получен запрос GET /films/common?userId={}&friendId={}", userId, friendId);
+        return filmService.commonFilmsList(userId, friendId);
+    }
+
     // GET /films/popular?count={count} — возвращает список из первых {count} фильмов по количеству лайков
     @GetMapping("/popular")
     public List<Film> findPopularFilms(@RequestParam(value = "count", defaultValue = "10", required = false) Integer count) {

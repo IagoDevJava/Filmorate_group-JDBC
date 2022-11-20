@@ -138,6 +138,21 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
+
+    //получение списка общих фильмов
+    @Override
+    public List<Film> commonFilmsList(Long userId, Long friendId) {
+        log.info("Получение списка общих фильмов");
+        String sql = "SELECT f.* FROM LIKES as l " +
+                "INNER JOIN FILMS AS f ON f.ID = l.FILM_ID " +
+                "WHERE l.USER_ID = ? " +
+                "INTERSECT " +
+                "SELECT f.* FROM LIKES as l " +
+                "INNER JOIN FILMS AS f ON f.ID = l.FILM_ID " +
+                "WHERE l.USER_ID = ? ";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), userId, friendId);
+    }
+
     private List<Long> getLikes(Long id) {
         log.info("Получение списка лайков фильма {}", id);
         String sql = "select user_id from likes where film_id = ?";
