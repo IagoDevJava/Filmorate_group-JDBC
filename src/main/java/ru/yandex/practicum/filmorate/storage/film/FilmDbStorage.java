@@ -179,6 +179,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
 
+
     private List<Long> getLikes(Long id) {
         log.info("Получение списка лайков фильма {}", id);
         String sql = "select user_id from likes where film_id = ?";
@@ -203,12 +204,26 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
+    //получение списка общих фильмов
+    @Override
+    public List<Film> commonFilmsList(Long userId, Long friendId) {
+        log.info("Получение списка общих фильмов");
+        String sql = "SELECT f.* FROM LIKES as l " +
+                "INNER JOIN FILMS AS f ON f.ID = l.FILM_ID " +
+                "WHERE l.USER_ID = ? " +
+                "INTERSECT " +
+                "SELECT f.* FROM LIKES as l " +
+                "INNER JOIN FILMS AS f ON f.ID = l.FILM_ID " +
+                "WHERE l.USER_ID = ? ";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), userId, friendId);
+    }
 
     /**
      * возвращает список первых фильмов по количеству лайков.
      * Если значение параметра count не задано, верните первые 10.
      */
 
+     
     public List<Film> findPopularFilms(Integer count) {
         List<Film> list = new ArrayList<>();
 
@@ -276,7 +291,7 @@ public class FilmDbStorage implements FilmStorage {
         return film;
 
     }
-
+    
     private List<Long> getIdFilms(Integer count) {
         log.info("Получение списка id пользователей, поставивших лайки");
         String sql = "select f.id, COUNT(l.user_id) " +

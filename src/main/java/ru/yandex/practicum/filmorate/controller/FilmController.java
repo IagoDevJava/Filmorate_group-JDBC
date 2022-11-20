@@ -92,6 +92,13 @@ public class FilmController {
         return filmService.deleteLike(id, userId);
     }
 
+    // GET /films/common?userId={userId}&friendId={friendId} - получить список общих фильмов
+    @GetMapping("/common")
+    public List<Film> commonFilmsList(@RequestParam Long userId, @RequestParam Long friendId) {
+        log.info("Получен запрос GET /films/common?userId={}&friendId={}", userId, friendId);
+        return filmService.commonFilmsList(userId, friendId);
+    }
+
     /**
      * возвращает список фильмов по количеству лайков.
      */
