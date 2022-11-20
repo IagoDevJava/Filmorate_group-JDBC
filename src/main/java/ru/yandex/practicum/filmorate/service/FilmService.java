@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
@@ -171,6 +170,47 @@ public class FilmService {
         if (filmStorage.findPopularFilms(count) != null) {
             log.info("Список популярных фильмов сформирован");
             return filmStorage.findPopularFilms(count);
+        } else {
+            log.info("Популярных фильмов нет :( ");
+            return null;
+        }
+    }
+
+    //поиск популярных фильмов по году
+    public List<Film> findPopularFilms(Integer count, Integer year) {
+        if (count <= 0) {
+            throw new IncorrectCountException("count");
+        }
+
+        if (filmStorage.findPopularFilms(count, year) != null) {
+            log.info("Список популярных фильмов сформирован");
+            return filmStorage.findPopularFilms(count, year);
+        } else {
+            log.info("Популярных фильмов нет :( ");
+            return null;
+        }
+    }
+
+    public List<Film> findPopularFilms(Integer count, Long genreId) {
+        if (count <= 0) {
+            throw new IncorrectCountException("count");
+        }
+        if (filmStorage.findPopularFilms(count, genreId) != null) {
+            log.info("Список популярных фильмов сформирован");
+            return filmStorage.findPopularFilms(count, genreId);
+        } else {
+            log.info("Популярных фильмов нет :( ");
+            return null;
+        }
+    }
+
+    public List<Film> findPopularFilms(Integer count, Long genreId, Integer year) {
+        if (count <= 0) {
+            throw new IncorrectCountException("count");
+        }
+        if (filmStorage.findPopularFilms(count, genreId, year) != null) {
+            log.info("Список популярных фильмов сформирован");
+            return filmStorage.findPopularFilms(count, genreId);
         } else {
             log.info("Популярных фильмов нет :( ");
             return null;
