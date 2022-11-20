@@ -60,13 +60,17 @@ public class FilmController {
 
     // GET /films/popular?count={count} — возвращает список из первых {count} фильмов по количеству лайков
     @GetMapping("/popular")
+    public List<Film> findPopularFilms(@RequestParam(defaultValue = "10", required = false) Integer count) {
+            log.info("Получен запрос GET /films/popular?count={count} — список фильмов по количеству лайков");
+            return filmService.findPopularFilms(count);
+    }
+
+    // GET /films/popular?count={limit}&genreId={genreId}&year={year} - получение списка популярных фильмов по жанру или году
+    @GetMapping("/popular")
     public List<Film> findPopularFilms(@RequestParam(defaultValue = "10", required = false) Integer count,
                                        @RequestParam(value = "genreId", required = false) Long genreId,
                                        @RequestParam(value = "year", required = false) Integer year) {
-        if (genreId == null && year == null) {
-            log.info("Получен запрос GET /films/popular?count={count} — список фильмов по количеству лайков");
-            return filmService.findPopularFilms(count);
-        } else if (genreId == null) {
+        if (genreId == null) {
             return filmService.findPopularFilms(count, year);
         } else if (year == null) {
             return filmService.findPopularFilms(count, genreId);
