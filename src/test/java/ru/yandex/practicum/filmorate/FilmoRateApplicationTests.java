@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
@@ -22,8 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
@@ -314,6 +314,52 @@ public class FilmoRateApplicationTests {
                         assertThat(film2)
                 );
 
+    }
+
+    /**
+     * тест на удаление фильма по id
+     */
+    @Test
+    public void isDeleteFilmById() {
+        Film film = Film.builder()
+                .id(1L)
+                .name("film1")
+                .description("desc1")
+                .releaseDate(LocalDate.parse("2010-10-10"))
+                .duration(120)
+                .rate(0L)
+                .mpa(new Mpa(1L, "G"))
+                .genres(new ArrayList<>())
+                .build();
+        filmStorage.create(film);
+        filmStorage.deleteFilmById(String.valueOf(1));
+
+        assertThrows(FilmNotFoundException.class, () -> {
+            filmStorage.findFilmById(1L);
+        });
+    }
+
+    /**
+     * тест на удаление фильмов
+     */
+    @Test
+    public void isDeleteFilms() {
+        Film film = Film.builder()
+                .id(1L)
+                .name("film1")
+                .description("desc1")
+                .releaseDate(LocalDate.parse("2010-10-10"))
+                .duration(120)
+                .rate(0L)
+                .mpa(new Mpa(1L, "G"))
+                .genres(new ArrayList<>())
+                .build();
+        filmStorage.create(film);
+        filmStorage.clearFilms();
+
+        assertThrows(FilmNotFoundException.class, () -> {
+            filmStorage.findFilmById(1L);
+        });
     }
 
     @Test
