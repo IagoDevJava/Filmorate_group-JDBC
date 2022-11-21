@@ -14,6 +14,7 @@ import java.util.List;
 @RequestMapping("/films")
 public class FilmController {
     FilmService filmService;
+
     @Autowired
     public FilmController(FilmService filmService) {
         this.filmService = filmService;
@@ -58,11 +59,25 @@ public class FilmController {
         return filmService.deleteLike(id, userId);
     }
 
-    // GET /films/popular?count={count} — возвращает список из первых {count} фильмов по количеству лайков
+    // GET /films/popular — возвращает список из популярных фильмов по количеству лайков, годам, жанрам
+
     @GetMapping("/popular")
-    public List<Film> findPopularFilms(@RequestParam(value = "count", defaultValue = "10", required = false) Integer count) {
-        log.info("Получен запрос GET /films/popular?count={count} — список фильмов по количеству лайков");
-        return filmService.findPopularFilms(count);
+    public List<Film> findPopularFilms(@RequestParam(defaultValue = "10", required = false) Integer count,
+                                       @RequestParam(value = "genreId", required = false) Long genreId,
+                                       @RequestParam(value = "year", required = false) Integer year) {
+        if (genreId == null && year == null) {
+            log.info("Получен запрос GET /films/popular?count={count} — список фильмов по количеству лайков");
+            return filmService.findPopularFilms(count);
+        } else if (genreId == null) {
+            log.info("Получен запрос GET /films/popular?count={count}&year={year} — список лучших фильмов по годам");
+            return filmService.findPopularFilms(count, year);
+        } else if (year == null) {
+            log.info("Получен запрос GET /films/popular?count={count}&year={year} — список лучших фильмов по жанрам");
+            return filmService.findPopularFilms(count, genreId);
+        } else {
+            log.info("Получен запрос GET /films/popular?count={count}&year={year} — список лучших фильмов по годам и жанрам");
+            return filmService.findPopularFilms(count, genreId, year);
+        }
     }
 
 }
