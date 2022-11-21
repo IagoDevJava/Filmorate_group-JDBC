@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
@@ -27,41 +26,44 @@ public class FilmService {
 
     private final LocalDate oldDate = LocalDate.of(1895, 12, 28);
 
+    /**
+     * валидация фильмов и создание фильма
+     */
     public Film create(Film film) {
 
-        if(film.getId() != null && findFilmById(film.getId()) != null) {
+        if (film.getId() != null && findFilmById(film.getId()) != null) {
             log.info("Попытка добавить фильм с уже существующим id");
             throw new FilmAlreadyExistException(String.format("id %d уже существует", film.getId()));
         }
 
-        if(filmStorage.findAll().contains(film)) {
+        if (filmStorage.findAll().contains(film)) {
             log.info("Попытка добавить уже существующий фильм");
             throw new FilmAlreadyExistException("Фильм уже существует");
         }
 
-        if(film.getName() == null || film.getName().isEmpty() || film.getName().isBlank()) {
+        if (film.getName() == null || film.getName().isEmpty() || film.getName().isBlank()) {
             log.info("Попытка добавить фильм без названия");
             throw new InvalidNameException("Отсутствует название фильма");
         }
 
-        if(film.getDescription().length() > 200) {
+        if (film.getDescription().length() > 200) {
             log.info("Попытка добавить фильм с описанием более 200 символов");
             throw new InvalidDescriptionException("Описание фильма не может быть длиннее 200 символов");
         }
 
-        if(film.getReleaseDate().isBefore(oldDate)) {
+        if (film.getReleaseDate().isBefore(oldDate)) {
             log.info("Попытка добавить фильм с датой релиза ранее 1895-12-28");
             throw new InvalidReleaseDateException("Дата релиза фильма ранее 1895-12-28");
         }
 
-        if(film.getDuration() <= 0) {
+        if (film.getDuration() <= 0) {
             log.info("Попытка добавить фильм продолжительностью <= 0");
             throw new InvalidDurationException(String.format(
                     "Некорректная продолжительность фильма %d",
                     film.getDuration()));
         }
 
-        if(film.getMpa() == null) {
+        if (film.getMpa() == null) {
             log.info("Попытка добавить фильм без mpa");
             throw new InvalidNameException("У фильма отсутствует mpa");
         }
@@ -69,24 +71,27 @@ public class FilmService {
         return filmStorage.create(film);
     }
 
+    /**
+     * валидация фильмов и обновление фильма
+     */
     public Film update(Film film) {
-        if(film.getId() == null || findFilmById(film.getId()) == null) {
+        if (film.getId() == null || findFilmById(film.getId()) == null) {
             log.info("Попытка обновить фильм с несуществующим или пустым id: {}", film.getId());
             throw new InvalidIdException(String.format("Пустой или несуществующий id: %d", film.getId()));
         }
-        if(film.getName() == null || film.getName().isEmpty() || film.getName().isBlank()) {
+        if (film.getName() == null || film.getName().isEmpty() || film.getName().isBlank()) {
             log.info("Попытка обновить фильм без указания названия, id фильма: {}", film.getId());
             throw new InvalidNameException("Отсутствует название фильма");
         }
-        if(film.getDescription().length() > 200) {
+        if (film.getDescription().length() > 200) {
             log.info("Попытка добавить фильм с описанием более 200 символов");
             throw new InvalidDescriptionException("Описание фильма не может быть длиннее 200 символов");
         }
-        if(film.getReleaseDate().isBefore(oldDate)) {
+        if (film.getReleaseDate().isBefore(oldDate)) {
             log.info("Попытка обновить фильм с датой релиза ранее 1895-12-28, id фильма: {}", film.getId());
             throw new InvalidReleaseDateException("Дата релиза фильма ранее 1895-12-28");
         }
-        if(film.getDuration() <= 0) {
+        if (film.getDuration() <= 0) {
             log.info("Попытка обновить фильм с продолжительностью <= 0: {}", film.getDuration());
             throw new InvalidDurationException(String.format(
                     "Некорректная продолжительность фильма %d",
@@ -96,11 +101,16 @@ public class FilmService {
         return filmStorage.update(film);
     }
 
+    /**
+     * получение всех фильмов
+     */
     public List<Film> findAll() {
         return filmStorage.findAll();
     }
 
-    // поиск фильма по id
+    /**
+     * получение фильма по id
+     */
     public Film findFilmById(Long id) {
         if (filmStorage.findFilmById(id) != null) {
             return filmStorage.findFilmById(id);
@@ -109,10 +119,26 @@ public class FilmService {
         }
     }
 
-    // поставить лайк фильму
+    /**
+     * Очистить список фильмов
+     */
+    public void clearFilms() {
+        filmStorage.clearFilms();
+    }
+
+    /**
+     * Удаление фильма по id
+     */
+    public void deleteFilmById(String idStr) {
+        filmStorage.deleteFilmById(idStr);
+    }
+
+    /**
+     * Пользователь ставит фильму лайк
+     */
     public String addLike(Long id, Long userId) {
         checkId(id, userId);
-        if(userStorage.findUserById(userId) != null) {
+        if (userStorage.findUserById(userId) != null) {
             if (findFilmById(id) != null) {
                 filmStorage.addLike(id, userId);
                 log.info("Фильму с id {} поставлен лайк пользователем {}", id, userId);
@@ -127,10 +153,12 @@ public class FilmService {
         }
     }
 
-    // удалить лайк
+    /**
+     * пользователь удаляет лайк.
+     */
     public String deleteLike(Long id, Long userId) {
         checkId(id, userId);
-        if(userStorage.findUserById(userId) != null) {
+        if (userStorage.findUserById(userId) != null) {
             if (findFilmById(id) != null) {
                 if (filmStorage.deleteLike(id, userId)) {
                     log.info("У фильма с id {} удален лайк пользователем {}", id, userId);
@@ -150,19 +178,21 @@ public class FilmService {
         }
     }
 
-    private void checkId(Long id, Long userId) {
-        if (id == null || id < 1) {
-            log.info("Фильм с пустым или отрицательным id {}");
-            throw new InvalidIdException("Фильм с пустым или отрицательным id");
-        }
-
-        if (userId == null || userId < 1) {
-            log.info("Пользователь с пустым или отрицательным id {}");
-            throw new InvalidIdException("Пользователь с пустым или отрицательным id");
+    // получение списка общих фильмов
+    public List<Film> commonFilmsList(Long userId, Long friendId) {
+        if(userStorage.findUserById(userId) == null || userStorage.findUserById(friendId) == null) {
+            log.info("Попытка получения списка общих фильмов пользователями с несуществующими id");
+            throw new UserNotFoundException("Один из пользователей не зарегестрирован");
+        } else {
+            log.info("Получен список общих фильмов пользователей {} и {}", userId, friendId);
+            return filmStorage.commonFilmsList(userId, friendId);
         }
     }
 
-    // список из первых {count} фильмов по количеству лайков
+    /**
+     * возвращает список первых фильмов по количеству лайков.
+     * Если значение параметра count не задано, верните первые 10.
+     */
     public List<Film> findPopularFilms(Integer count) {
         if (count <= 0) {
             throw new IncorrectCountException("count");
@@ -176,6 +206,7 @@ public class FilmService {
             return null;
         }
     }
+
 
     public List<Film> findPopularFilms(Integer count, Integer year) {
         if (count <= 0) {
@@ -214,6 +245,17 @@ public class FilmService {
         } else {
             log.info("Популярных фильмов нет :( ");
             return null;
+
+    private void checkId(Long id, Long userId) {
+        if (id == null || id < 1) {
+            log.info("Фильм с пустым или отрицательным id {}", id);
+            throw new InvalidIdException("Фильм с пустым или отрицательным id");
+        }
+
+        if (userId == null || userId < 1) {
+            log.info("Пользователь с пустым или отрицательным id {}", userId);
+            throw new InvalidIdException("Пользователь с пустым или отрицательным id");
+
         }
     }
 }

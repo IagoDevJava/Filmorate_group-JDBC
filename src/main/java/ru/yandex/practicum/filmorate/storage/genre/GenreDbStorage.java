@@ -73,11 +73,12 @@ public class GenreDbStorage implements GenreStorage {
     // добавление жанров
     @Override
     public void addGenre(Film film) {
-        log.info("Присвоение жанров фильму с id {}", film.getId());
-        for(Genre g : film.getGenres()) {
-            String sql = "INSERT INTO FILM_GENRE (film_id, genre_id) VALUES (?, ?)";
-            jdbcTemplate.update(sql, film.getId(), g.getId());
-            log.info("Фильму с id {} присвоен жанр {}", film.getId(), g);
+        if (!film.getGenres().isEmpty()) {
+            for (Genre g : film.getGenres()) {
+                String sql = "INSERT INTO FILM_GENRE (film_id, genre_id) VALUES (?, ?)";
+                jdbcTemplate.update(sql, film.getId(), g.getId());
+                log.info("Фильму с id {} присвоен жанр {}", film.getId(), g);
+            }
         }
     }
 

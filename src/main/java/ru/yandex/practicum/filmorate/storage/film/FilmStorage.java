@@ -14,9 +14,27 @@ public interface FilmStorage {
 
     public Film findFilmById(Long id);
 
+
+
+    /**
+     * Очистить список фильмов
+     */
+    public void clearFilms();
+
+    /**
+     * Удаление фильма по id
+     */
+    public void deleteFilmById(String id);
+
+
     public String addLike(Long id, Long userId);
 
     public boolean deleteLike(Long id, Long userId);
+
+
+
+    List<Film> commonFilmsList(Long userId, Long friendId);
+
 
     public List<Film> findPopularFilms(Integer count);
 
