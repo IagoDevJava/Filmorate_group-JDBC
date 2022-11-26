@@ -119,6 +119,12 @@ public class UserDbStorage implements UserStorage {
             jdbcTemplate.update(sqlDelFr, id, id);
             String sqlDropLike = "DELETE FROM LIKES WHERE USER_ID=?";
             jdbcTemplate.update(sqlDropLike, id);
+            String sqlDelReview = "DELETE FROM REVIEWS WHERE USER_ID=?";
+            jdbcTemplate.update(sqlDelReview, id);
+            String sqlDelReviewLikes = "DELETE FROM REVIEW_LIKES WHERE USER_ID=?";
+            jdbcTemplate.update(sqlDelReviewLikes, id);
+            String sqlDelFeed = "DELETE FROM FEED WHERE USER_ID=?";
+            jdbcTemplate.update(sqlDelFeed, id);
             String sqlDelUs = "DELETE from USERS where ID=?";
             jdbcTemplate.update(sqlDelUs, id);
         } else {
