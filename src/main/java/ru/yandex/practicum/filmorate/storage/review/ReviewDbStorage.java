@@ -179,13 +179,6 @@ public class ReviewDbStorage implements ReviewStorage {
         String sql = "INSERT INTO REVIEW_LIKES (review_id, user_id, useful, creationDate) " +
                 "VALUES (?, ?, ?, ?)";
         jdbcTemplate.update(sql, id, userId, useful, Timestamp.valueOf(LocalDateTime.now()));
-
-//        if (id == -1) {
-//            feedStorage.createFeedEntity(userId, id, "DISLIKE", "ADD");
-//        } else {
-//            feedStorage.createFeedEntity(userId, id, "LIKE", "ADD");
-//        }
-
         return String.format("Фильму с id %d  поставлен лайк пользователем %d", id, userId);
     }
 
@@ -194,12 +187,6 @@ public class ReviewDbStorage implements ReviewStorage {
     public void deleteLike(Long id, Long userId) {
         String sql = "delete from REVIEW_LIKES where review_id = ? and user_id = ?";
         jdbcTemplate.update(sql, id, userId);
-
-//        if (id == -1) {
-//            feedStorage.createFeedEntity(userId, id, "DISLIKE", "REMOVE");
-//        } else {
-//            feedStorage.createFeedEntity(userId, id, "LIKE", "REMOVE");
-//        }
     }
 
     // получить useful отзыва по id (для проверки наличия и статуса лайка)
@@ -219,5 +206,4 @@ public class ReviewDbStorage implements ReviewStorage {
         Long l = rs.getLong("useful");
         return l;
     }
-
 }

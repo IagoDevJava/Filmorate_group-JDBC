@@ -9,13 +9,13 @@ import java.util.Objects;
 @Data
 @Builder
 public class Review {
-    Long reviewId;
-    String content;
-    Boolean isPositive;
-    Long userId;
-    Long filmId;
-    Long useful;
-    LocalDateTime creationDate;
+    private Long reviewId;
+    private String content;
+    private Boolean isPositive;
+    private Long userId;
+    private Long filmId;
+    private Long useful;
+    private LocalDateTime creationDate;
 
     public Review(Long reviewId, String content, Boolean isPositive, Long userId, Long filmId, Long useful, LocalDateTime creationDate) {
         this.reviewId = reviewId;

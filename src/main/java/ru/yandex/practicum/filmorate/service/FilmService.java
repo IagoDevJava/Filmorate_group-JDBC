@@ -167,19 +167,6 @@ public class FilmService {
         }
     }
 
-
-    private void checkId(Long id, Long userId) {
-        if (id == null || id < 1) {
-            log.info("Фильм с пустым или отрицательным id {}", id);
-            throw new InvalidIdException("Фильм с пустым или отрицательным id");
-        }
-
-        if (userId == null || userId < 1) {
-            log.info("Пользователь с пустым или отрицательным id {}", userId);
-            throw new InvalidIdException("Пользователь с пустым или отрицательным id");
-        }
-    }
-
     // поиск популярных фильмов по жанру
     public List<Film> findPopularFilms(Integer count, Long genreId) {
         if (count <= 0) {
@@ -210,19 +197,39 @@ public class FilmService {
     }
 
     // поиск фильма по режиссеру или названию
+    public List<Film> searchFilm(String query, List<String> by) {
+        if (by.contains("director") && !by.contains("title")) {
+            return searchFilmByDirector(query,by);
+        }
+        if (!by.contains("director") && by.contains("title")) {
+            return searchFilmByTitle(query, by);
+        }
+        return searchFilmByTitleAndDirector(query,by);
+    }
 
-    public List<Film> searchFilmByDirector(String query, List<String> values) {
+    private List<Film> searchFilmByDirector(String query, List<String> values) {
         log.info("Поиск фильмов по режиссеру");
         return filmStorage.searchFilmByDirector(query, values);
     }
 
-    public List<Film> searchFilmByTitle(String query, List<String> values) {
+    private List<Film> searchFilmByTitle(String query, List<String> values) {
         log.info("Поиск фильмов по названию");
         return filmStorage.searchFilmByTitle(query, values);
     }
 
-    public List<Film> searchFilmByTitleAndDirector(String query, List<String> values) {
+    private List<Film> searchFilmByTitleAndDirector(String query, List<String> values) {
         log.info("Поиск фильмов по названию и режиссеру");
         return filmStorage.searchFilmByTitleAndDirector(query,values);
+    }
+
+    private void checkId(Long id, Long userId) {
+        if (id == null || id < 1) {
+            log.info("Фильм с пустым или отрицательным id {}", id);
+            throw new InvalidIdException("Фильм с пустым или отрицательным id");
+        }
+        if (userId == null || userId < 1) {
+            log.info("Пользователь с пустым или отрицательным id {}", userId);
+            throw new InvalidIdException("Пользователь с пустым или отрицательным id");
+        }
     }
 }
