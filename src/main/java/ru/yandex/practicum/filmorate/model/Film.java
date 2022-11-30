@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,9 +18,10 @@ public class Film {
     Long rate;
     Mpa mpa;
     List<Genre> genres;
+    List<Director> directors;
 
     public Film(Long id, String name, String description, LocalDate releaseDate, long duration, Long rate,
-                Mpa mpa, List<Genre> genres) {
+                Mpa mpa, List<Genre> genres, List<Director> directors) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -30,7 +30,10 @@ public class Film {
         this.rate = rate;
         this.mpa = mpa;
         this.genres = genres;
+        this.directors = directors;
     }
+
+
 
     @Override
     public boolean equals(Object o) {
