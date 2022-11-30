@@ -104,36 +104,26 @@ public class FilmController {
      */
     @GetMapping("/popular")
     public List<Film> findPopularFilms(@RequestParam(defaultValue = "10", required = false) Integer count,
-                                       @RequestParam(value = "genreId", required = false) Long genreId,
-                                       @RequestParam(value = "year", required = false) Integer year) {
-        if (genreId == null && year == null) {
-            log.info("Получен запрос GET /films/popular?count={count} — список фильмов по количеству лайков");
-            return filmService.findPopularFilms(count);
-        } else if (genreId == null) {
-            log.info("Получен запрос GET /films/popular?count={count}&year={year} — список лучших фильмов по годам");
-            return filmService.findPopularFilms(count, year);
-        } else if (year == null) {
-            log.info("Получен запрос GET /films/popular?count={count}&year={year} — список лучших фильмов по жанрам");
-            return filmService.findPopularFilms(count, genreId);
-        } else {
-            log.info("Получен запрос GET /films/popular?count={count}&year={year} — список лучших фильмов по годам и жанрам");
-            return filmService.findPopularFilms(count, genreId, year);
-        }
+                                       @RequestParam(value = "genreId", defaultValue = "0", required = false) Long genreId,
+                                       @RequestParam(value = "year", defaultValue = "0", required = false) Integer year) {
+        log.info("Получен запрос GET /films/popular");
+        return filmService.findPopularFilms(count, genreId, year);
     }
+
 
     @GetMapping("/director/{directorId}")
     public List<Film> findFilmOfDirector(@PathVariable Long directorId, @RequestParam String sortBy) {
-        if(sortBy.equals("likes")){
+        if (sortBy.equals("likes")) {
             log.info("GET /films/director/{directorId}?sortBy=likes");
         } else {
             log.info("GET /films/director/{directorId}?sortBy=year");
         }
-        return filmService.findDirectorFilms(directorId,sortBy);
+        return filmService.findDirectorFilms(directorId, sortBy);
     }
 
     @GetMapping("/search")
-    public List<Film> searchFilm(@RequestParam String query, @RequestParam List<String> by){
-        return filmService.searchFilm(query,by);
+    public List<Film> searchFilm(@RequestParam String query, @RequestParam List<String> by) {
+        return filmService.searchFilm(query, by);
     }
 
 }

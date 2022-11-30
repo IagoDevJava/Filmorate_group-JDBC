@@ -126,20 +126,24 @@ public class FilmService {
      * возвращает список первых фильмов по количеству лайков.
      * Если значение параметра count не задано, верните первые 10.
      */
-    public List<Film> findPopularFilms(Integer count) {
+    public List<Film> findPopularFilms(Integer count, Long genreId, Integer year) {
         if (count <= 0) {
             throw new IncorrectCountException("count");
         }
-
-        if (filmStorage.findPopularFilms(count) != null) {
+        if (genreId == 0 && year == 0) {
             log.info("Список популярных фильмов сформирован");
             return filmStorage.findPopularFilms(count);
+        } else if (genreId == 0) {
+            log.info("Список популярных фильмов сформирован");
+            return filmStorage.findPopularFilms(count, year);
+        } else if (year == 0) {
+            log.info("Список популярных фильмов сформирован");
+            return filmStorage.findPopularFilms(count, genreId);
         } else {
-            log.info("Популярных фильмов нет :( ");
-            return null;
+            log.info("Список популярных фильмов сформирован");
+            return filmStorage.findPopularFilms(count, genreId, year);
         }
     }
-
 
     public List<Film> findDirectorFilms(Long directorId, String sort) {
         if (filmStorage.findDirectorFilms(directorId, sort) != null) {
@@ -147,51 +151,6 @@ public class FilmService {
             return filmStorage.findDirectorFilms(directorId, sort);
         } else {
             log.info("У режиссера нет фильмов :(");
-            return null;
-        }
-    }
-
-    // поиск популярных фильмов по году
-    public List<Film> findPopularFilms(Integer count, Integer year) {
-        if (count <= 0) {
-            throw new IncorrectCountException("count");
-        }
-
-        if (filmStorage.findPopularFilms(count, year) != null) {
-            log.info("Список популярных фильмов сформирован");
-            return filmStorage.findPopularFilms(count, year);
-        } else {
-            log.info("Популярных фильмов нет :( ");
-
-            return null;
-        }
-    }
-
-    // поиск популярных фильмов по жанру
-    public List<Film> findPopularFilms(Integer count, Long genreId) {
-        if (count <= 0) {
-            throw new IncorrectCountException("count");
-
-        }
-        if (filmStorage.findPopularFilms(count, genreId) != null) {
-            log.info("Список популярных фильмов сформирован");
-            return filmStorage.findPopularFilms(count, genreId);
-        } else {
-            log.info("Популярных фильмов нет :( ");
-            return null;
-        }
-    }
-
-    // поиск популярных фильмов по году и жанру
-    public List<Film> findPopularFilms(Integer count, Long genreId, Integer year) {
-        if (count <= 0) {
-            throw new IncorrectCountException("count");
-        }
-        if (filmStorage.findPopularFilms(count, genreId, year) != null) {
-            log.info("Список популярных фильмов сформирован");
-            return filmStorage.findPopularFilms(count, genreId, year);
-        } else {
-            log.info("Популярных фильмов нет :( ");
             return null;
         }
     }
