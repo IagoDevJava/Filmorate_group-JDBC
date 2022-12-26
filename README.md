@@ -1,5 +1,5 @@
 # java-filmorate
-Third project homework Y.P.
+Third project homework Y.P. With Spring Boot
 
 ## Это репозиторий проекта "Фильмография"  
 #### Он позволяет работать с поиском фильмов в БД, отмечать их, взаимодействовать с другими пользователями.
